@@ -1,6 +1,7 @@
 package com.project.analytics_service.consumer;
 
 import com.project.analytics_service.entity.ApiRequestLog;
+import com.project.analytics_service.producer.BlockedKeyProducer;
 import com.project.analytics_service.repository.ApiRequestLogRepository;
 import com.project.analytics_service.service.AbuseDetectionService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ public class ApiRequestConsumer {
     private final ApiRequestLogRepository apiRequestLogRepository;
     private final ObjectMapper objectMapper;
     private final AbuseDetectionService abuseDetectionService;
+    private final BlockedKeyProducer blockedKeyProducer;
 
     @KafkaListener(topics = "api-request-events", groupId = "analytics-group")
     public void consumer(String message){
@@ -23,6 +25,7 @@ public class ApiRequestConsumer {
             boolean isAbusive = abuseDetectionService.isAbsusive(log.getApiKey(),log.getTimestamp());
 
             if(isAbusive){
+                blockedKeyProducer.publishBlockedEvent(log.getApiKey());
                 System.out.println("ABUSE DETECTED FOR APIkey: " + log.getApiKey());
             }
 

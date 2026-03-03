@@ -1,4 +1,4 @@
-package com.project.api_gateway.event;
+package com.project.common.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

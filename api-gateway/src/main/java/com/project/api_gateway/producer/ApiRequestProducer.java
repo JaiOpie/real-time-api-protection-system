@@ -1,7 +1,7 @@
 package com.project.api_gateway.producer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.api_gateway.event.ApiRequestEvent;
+import com.project.common.events.ApiRequestEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;

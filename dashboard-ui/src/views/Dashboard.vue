@@ -24,18 +24,19 @@
 
     <h2>Blocked API Keys</h2>
 
-<ul>
-  <li v-for="key in blockedKeys" :key="key">
-    {{ key }}
-  </li>
-</ul>
+<div class="card" v-for="key in blockedKeys" :key="key">
+  🚫 {{ key }}
+</div>
 
 <h2>API Traffic Trend</h2>
 
-<TrafficChart :requests="requests"/>
+<div class="chart-card">
+  <TrafficChart :requests="requests"/>
+</div>
 
     <h2>Recent API Traffic</h2>
 
+<div class="table-container">
     <table>
       <thead>
         <tr>
@@ -62,14 +63,14 @@
         </tr>
       </tbody>
     </table>
+    </div>
 
   </div>
 </template>
 
 <script>
 import { getRequests, getBlockedKeys } from "../services/api"
-import TrafficChart from "@/components/TrafficChart.vue";
-
+import TrafficChart from "../components/TrafficChart.vue";
 
 
 export default {
@@ -90,9 +91,13 @@ export default {
     async loadData() {
 
       const req = await getRequests()
+        console.log("Requests:", req.data)
+
       this.requests = req.data
 
       const blocked = await getBlockedKeys()
+        console.log("Requests:", req.data)
+
       this.blockedKeys = blocked.data
 
     }
@@ -137,35 +142,90 @@ export default {
 
 .dashboard{
   padding:40px;
-  font-family:Arial;
+  font-family:Arial, Helvetica, sans-serif;
+  background:#0f172a;
+  min-height:100vh;
+  color:white;
 }
 
 .stats{
   display:flex;
   gap:20px;
+  margin-bottom:40px;
+}
+
+.chart-card{
+  background:#1e293b;
+  padding:25px;
+  border-radius:12px;
+  width:100%;
   margin-bottom:30px;
+  box-shadow:0px 4px 12px rgba(0,0,0,0.4);
 }
 
 .card{
-  background:#f3f4f6;
+  background:#1e293b;
   padding:20px;
-  border-radius:8px;
-  width:200px;
+  border-radius:10px;
+  width:220px;
   text-align:center;
+  box-shadow:0px 4px 10px rgba(0,0,0,0.4);
+}
+
+.card h3{
+  margin-bottom:10px;
+}
+
+.card p{
+  font-size:28px;
+  font-weight:bold;
 }
 
 table{
   width:100%;
   border-collapse:collapse;
+  background:#1e293b;
+  border-radius:8px;
+  overflow:hidden;
 }
 
 th,td{
-  border:1px solid #ddd;
-  padding:8px;
+  padding:10px;
+  text-align:left;
 }
 
 th{
-  background:#f0f0f0;
+  background:#334155;
+}
+
+tr:nth-child(even){
+  background:#1e293b;
+}
+
+tr:nth-child(odd){
+  background:#172036;
+}
+
+h1{
+  margin-bottom:30px;
+}
+
+h2{
+  margin-top:30px;
+  margin-bottom:15px;
+}
+
+.table-container{
+  max-height:300px;
+  overflow-y:auto;
+  border-radius:8px;
+}
+
+thead th{
+  position:sticky;
+  top:0;
+  background:#334155;
+  z-index:1;
 }
 
 </style>

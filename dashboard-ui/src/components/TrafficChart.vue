@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="chart-container">
     <canvas ref="chart"></canvas>
   </div>
 </template>
@@ -17,9 +17,11 @@ export default {
     }
   },
 
-  mounted() {
-    this.renderChart()
-  },
+mounted() {
+  if (this.requests.length > 0) {
+    this.updateChart()
+  }
+},
 
   watch: {
     requests() {
@@ -50,11 +52,15 @@ export default {
 
       const grouped = this.groupRequests()
 
-      this.chart = new Chart(ctx, {
+this.chart = new Chart(ctx, {
+  type: "line",
 
-        type: "line",
+  options:{
+    responsive:true,
+    maintainAspectRatio:false
+  },
 
-        data: {
+  data:{
           labels: Object.keys(grouped),
 
           datasets: [
@@ -70,19 +76,50 @@ export default {
       })
     },
 
-    updateChart() {
+updateChart() {
 
-      if (!this.chart) return
+  if (!this.$refs.chart) return
 
-      const grouped = this.groupRequests()
+  const grouped = this.groupRequests()
 
-      this.chart.data.labels = Object.keys(grouped)
-      this.chart.data.datasets[0].data = Object.values(grouped)
+  if (this.chart) {
+    this.chart.destroy()
+  }
 
-      this.chart.update()
+  const ctx = this.$refs.chart
+
+  this.chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: Object.keys(grouped),
+      datasets: [
+        {
+          label: "Requests",
+          data: Object.values(grouped),
+          borderColor: "blue",
+          tension: 0.3
+        }
+      ]
     }
+  })
+}
 
   }
 
 }
 </script>
+
+<style scoped>
+
+.chart-container{
+  width:100%;
+  height:350px;
+  position:relative;
+}
+
+canvas{
+  width:100% !important;
+  height:100% !important;
+}
+
+</style>

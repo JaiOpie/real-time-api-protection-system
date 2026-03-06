@@ -28,8 +28,19 @@ public class ApiKeyFilter implements GlobalFilter {
                         .getHeaders().getFirst(ApiGatewayConstant.API_KEY_HEADER);
 
         if(blockedKeyService.isBlocked(apikey)){
+            ApiRequestEvent event = new ApiRequestEvent(
+                    apikey,
+                    exchange.getRequest().getURI().getPath(),
+                    exchange.getRequest().getMethod().name(),
+                    429,
+                    0,
+                    System.currentTimeMillis()
+            );
+
+            apiRequestProducer.sendEvent(event);
+
             exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
-            return  exchange.getResponse().setComplete();
+            return exchange.getResponse().setComplete();
         }
 
         if(apikey==null || !apikey.equals(ApiGatewayConstant.VALID_API_KEY)){
